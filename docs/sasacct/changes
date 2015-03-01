@@ -1,0 +1,69 @@
+1.0.3
+- fixed bug in all cgi scripts, when using 'zoom' graphics does not display
+- fixed a bug when using rrd 1.2.x graphics do not display (comment escape ':')
+- adding graph functionality directly to the cgi script making showgraph.cgi 
+  obsolette.
+- fixed a bug in sasacct get_remote() function. It doesn't correctly 
+  get the port number of the remote address.
+
+1.0.2
+- username/password authentication for the web interface with
+- sastragraph can collect data by interface descriptions.
+1.0.1 
+- nice logo and little changes on the html.(Anatoly Radulov)
+- iptables rules now can be added without specifying target
+- showtraf.cgi traffic in MB with with 3 int's after the decimal separator (James Lane)
+- minor change ;) the color is gren+blue(mrtg like),#C0C0C0 is pain on TFT
+- cimon + sastragraph in the package wich means you can account router interfaces via snmp
+  or (if Cisco) using cisco ip accounting as well.
+- the unknown values in the RRA rounded to zero.
+
+1.0 - stable
+- fixed a bug in showgraph.cgi - graphic doesn't show if gen_traff() doesn't return traffic for the
+  selected host but there is a .rrd file for it.
+- fixed a bug in showtraf.cgi - when selected two equal dates graphics will be created start data in 00:00:00 + 86000 sec
+- added a feature in showtraf.cgi for displaying values in Bits per Second and zoom of the graphic
+- complete rewrite of graph() function, support for graphs in Bits per second
+0.9
+- fixed design error - sasacct when run via super server doesn't report the hosts wich have
+   zero traffic.
+- fixed bug with get_remote() from sasacct accounting on pf.
+- fixed bug wich causes sasacct to create/update .rrd file localy even if started via super
+  server.
+0.8
+- '-e' argument. Gets the data via remote running sasacct and stores it localy.
+- '-i' argument added from commandline, sasacct will print its data, reset the
+  counters, and return without logging . Added for running sasacct via super-server
+  (inetd/xinetd)
+- graph function(sasacct.plx) will make opendir(logdir) call to find all the .rrd files and produce
+  graphics for all of them.It also doesn't generate graphics if your rrd files aren't updated since
+  last week
+- htmlmaker.plx will make opendir(graphdir) call to find the host for wich to generate
+  html files.It will search for files with -day.gif etc. extentions.
+- showtraf.cgi will make opendir(logdir) call to find the hosts for wich it has data to show
+
+0.7
+- summarizelog will not warn if there isn't logfile for the ip
+- added support for listing the traffic for all ip's (Andy Kwong)
+- some bugfixes in syslog logging and new option for debug mode (gives 
+  more information)
+0.6 
+- added support for accounting with pf (OpenBSD 3.0)
+- added command line option '-r' for loggind to rrd files without generating 
+  the graphics (reduces cpu utilization when accounting large networks )
+- added feature for generating on the fly graphics from the cgi(usefull for using with the -r
+  option ).
+- completely new way for accounting on Linux. See the INSTALL and README.first for details
+0.5 
+- added command line options for logging without using rrd (if you don't need it).
+  and summarizing the logfiles on a per daily basis. 
+- removed CGI::Pretty from the cgi. Some old perl distributions doesn't have it.
+0.4
+- errors to syslog so no more S-line.
+0.3-beta
+- graphic displays date of creation
+- small bug fixes
+0.2
+-added rrd support
+0.1
+-initial release

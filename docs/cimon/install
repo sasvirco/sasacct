@@ -1,0 +1,63 @@
+Be sure that rrdtool ,Net::SNMP and Net::Netmask are installed on the system.
+If you have error for missing RRDs module, go in the rrdtool directory and
+type 'make site-perl-install' in order to install it.
+Copy the cimon.conf in /etc, or edit cimon.plx to fit your needs.
+Edit cimon.conf and add your routers.
+Add networks if you have ip accounting enabled. 
+ReadWrite community is needed for this to work.
+If you want to have graphics in Bits per Second instead of Bytes Per Second
+edit cimon.plx and set $bits to 1.
+
+Quick Note about how to enable cisco ip-accounting
+1.Telnet to your router and login
+2.Switch to enable and configure 
+3.make basic access-list to bind the read-write community + host 
+access-list 5 permit xxx.xxx.xxx.xxx 
+where xxx.xxx.xxx.xxx is the ip addres from wich you will
+make  your querys
+4.enable snmp-server
+snmp-server community rwcommunity RW 5
+where rwcommunity is your communitystring and 5 is the access-list
+that you've created.
+5.You have to enable ip accounting on the selected interfaces.
+Because cisco counts only the output packets on an interface you'll have to
+determine wich interace is outgoing and wich is incomming.
+E.g if you have a serial interface to the internet and ethernet interface
+to your local area network in order to get input and output for the accounted
+hosts you have to enable traffic accounting on both of them
+--------------------------------------------------------------------------------
+Examples:
+
+router#conf t
+router#interface Serial0 
+router#ip accounting output-packets
+
+Will enable accounting for the output on serial interface (you get your output packets)
+
+router#conf t
+router#interface Ethernet 0
+router#ip accouting output-packets
+
+Will enable accounting for the output on ethernet interface (you get your input packets)
+----------------------------------------------------------------------------------
+Be sure that you completely understand how cisco makes ip accounting (this only in case
+you're preparing to ask questions ;-)).
+More information can be found on www.cisco.com.
+
+Cimon + SASacct
+To view the statistics collected for a period (date-to-date) you can use 
+the cgi scripts from another ip accounting package called sasacct.(http://rousse.pm.org/sasacct/)
+Just copy the .cgi scripts in yor cgi-bin directory and edit showtraf.cgi to point to 
+the directory where the files are located, or another option, if you're using sasacct
+just point the logdir of cimon to be the same as of the sasacct.
+Note that if you don't have sasacct installed and running (you don't need it if you only plan to
+use cimon only) when installing .cgi scripts you have to make two modifications.First is 
+the location of sasacct.conf (modify showtraf.cgi) and second edit sasacct.conf
+- D:somedir  must be replaced with D:/cimons/logdir. 
+SASacct provides some functionality that isn't implemented in cimon because it's already in sasacct.
+This includes summarizing of the logfiles, (sasacct -s), generating graphics only (sasacct -d) and generationg 
+html indexes with the graphics (htmlmaker.plx from sasacct's distribution). 
+
+Enjoy
+
+Buy me a beer if you find this usefull ;)). If you can't just have one and say "Cheers sas".

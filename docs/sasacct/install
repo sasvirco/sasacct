@@ -1,0 +1,141 @@
+-= SASACCT Installation Instruction =-
+
+1. IPCHAINS installation:(Linux 2.2.x)
+
+Enter your rules at /etc/rc.d/rc.local
+to start automaticaly after restart.Example 
+provided below.
+
+Create new chain;
+
+bash#ipchains -N SASACCTI
+bash#ipchains -N SASACCTO
+bash#ipchains -I input -j SASACCTI
+bash#ipchains -I output -j SASACCTO
+bash#ipchains -I SASACCTI -s 0/0 -d IP 
+bash#ipchains -I SASACCTO -s IP -d 0/0 
+
+This creates  two user-defined chains, SASACCTI and 
+SASACCTO which are to contain any  accounting rules 
+( these rules should be specified without a -j flag, 
+so that the packet simply pass trough them uncatched).
+  
+2. IPF installation (OpenBSD 2.7/2.8/2.9,FreeBSD)
+
+Modify /etc/ipf.rules and add your rules there
+then use ipf(ipf -F all;ipf -f /etc/ipf.rules) to reread. 
+Example provided below.
+
+#Count input packets on interface ppp0 from any to your IP:
+
+count in on ppp0 from any to 195.34.109.227
+
+#Count output packets on interface ppp0 from your IP to any:
+
+count out on ppp0 from 195.34.109.227 to any
+
+Your interface may vary, use 'ifconfig -a' 
+
+#tested on FreeBSD 4.4 and OpenBSD 2.8
+
+3. IPTABLES installation (Linux 2.4.x)
+
+Similar to ipchains installation except that you 
+must insert the rules for accounting in the SASACCT
+chain, in iptables INPUT and OUTPUT chains are for 
+incomming and outgoing connections to the local machine, 
+FORWARD is for machines for wich you are a router. 
+Create SASACCT chain where SASACCT
+data will be counted and after that jump from INPUT, 
+OUTPUT and FORWARD to SASACCT.
+
+iptables -N SASACCT
+iptables -I INPUT -j SASACCT
+iptables -I OUTPUT -j SASACCT
+iptables -I FORWARD -j SASACCT
+iptables -I SASACCT -s IP -d 0/0 
+iptables -I SASACCT -s 0/0 -d IP
+
+
+4. PF installation (OpenBSD 3.0)
+Modyfy /etc/pf.conf and add your accounting rules there.
+To account with pf you just have to add pass rules for the ip
+your're accounting. After making this reread the rules to add the new
+ones - "pfctl -F rules; pfctl -R /etc/pf.conf"
+NOTE: Rereading of your firewall rules will be done
+every 5 minutes wich means reload of your firewall
+rules. I'm not security specialist but this may
+compromise your security.
+Example provided below:
+-----snip------
+#account input packest from any to source address
+pass in quick on xl0 from any to 10.0.0.2
+#account output packets from source addres to any
+pass out quick on xl0 from 10.0.0.2 to any
+----snip-------
+There is a sample pf.conf in the example directory.
+If you're blocking some traffic you can add your block
+rules before the pass quick e.g. "block quick..."(for your firewall to work).
+This is one of the ways to do this  (I preffer to use pf this way)
+but you can add your block rules after the pass one too,without "quick" ,
+they will work but you must remove the quick from pass also. Be carefull because
+you can easy compromise your firewall.
+Read the pf.conf and pfctl manual. Your life will
+be easyer if you understand completely the logic of pf and what it can do
+for you.
+Also strange things happen when accounting ip's on 
+multialiased interfaces.Consider using another accounting 
+package writen for pf specialy.
+
+5.CRONTAB installation:
+Example for crontab entry, run sasacct every 5 minutes.
+
+*/5 * * * * path-to-sasacct 
+
+6: Cgi's installation
+Copy showtraf.cgi and showgraph.cgi in your httpd's cgi-bin.
+Modify showtraf.cgi ($configfile should point to your sasacct.conf) to fit your needs.
+More in the README in ../cgi-bin/ directory.
+
+7. Inetd and other super-server's
+In order to run sasacct via inetd you must do the following steps.
+First configure sasacct to run on the machine and to produce information
+for the hosts wich you want to monitor.
+Next add the following line to your /etc/services file.
+-------snip------
+sasacct         1234/tcp   
+-------snip------
+Add the following to /etc/inetd.conf
+-------snip------
+sasacct         stream  tcp     nowait  root    /usr/libexec/tcpd       /path-to-sasacct/sasacct.plx -i
+-------snip
+Restart inetd server with HUP signal.
+-------snip------------------------
+bash#kill -HUP  `ps ax | awk '/inetd/ {print $1}'`
+-------snip------------------------
+Note that your tcpd may recide in other directory. Search ;).
+And last but not least modify your /etc/hosts.allow and /etc/hosts.deny to allow
+the data from sasacct to be fetched only by the monitoring host.
+Prefferd way to do this is 'deny by default allow somehost' so you add "ALL:ALL" in /etc/hosts.deny
+and "sasacct.plx:your-monitoring-host" in /etc/hosts.allow. For more details see the manual
+page (hosts_access(5)).
+After finishing that yoy can run 'sasacct.plx -e' on the monitoring host and it will 
+get the data from the remote running sasacct.
+For xinetd usage you can use the file in examples/xinetd.d. Short description included
+as a comment in the file(examples/xinetd.d/sasacct).
+
+8. Tips and Tricks
+If you want your graphics in Bits Per second modify sasacc.plx 
+On the line my $bits = 0 ; change the value of $bits to 1.
+Before blameing someone else and sending emails, be sure, that the 
+kernel is counting correct. Issue commands like 
+this: 'ipfstat -ia' for BSD, 'ipchains -vxnL SASACCTI or SASACCTO'
+'iptables -vxnL SASACCT' or 'pfctl -s rules -v' for OpenBSD 3.0. Make some downloads and 
+see if there are the correct values for the traffic.
+Use iptables-save, iptables-restore or ipchains-save, ipchains-restore
+to save  the changes and to be shure that after restart everithing works fine.
+SASacct has no connection with your kernel and network configuration,
+it's just a simple parser,executing commands and splitting it's output looking
+for source in outgoing and destination in incomming traffic.
+Read the manual pages regarding the programs that sasacct uses to 'see' 
+the traffic and try to completely understand the logic. 

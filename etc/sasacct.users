@@ -1,0 +1,12 @@
+# sasacct.users 
+# The format is:
+#username:password:ip_inteface,ip,ip,ip_interface
+# There is special keyword called 'All'. The user
+# wich has it isntead of ip addresses is treated
+# as user who can see all accounted hosts
+
+#admin:c75d9b93:All
+
+#user:password:10.0.0.1_eth0,192.168.10.5,192.168.0.0
+sas:h235lfl2:10.0.0.1,10.0.0.2
+isheo:1k38s9l9x:10.0.0.4,192.168.100.5

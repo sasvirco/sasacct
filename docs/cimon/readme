@@ -1,0 +1,23 @@
+I .Introduction
+Cimon is a package for monitoring the load on cisco family
+products via snmp. It monitors and displays the cpu 5 minutes
+utilization in percents and free+used Processor memory. The so 
+called I/O(1000,2000,3000 series)memory(usualy 2 MB)
+is being monitored too, but there isn't graphic for it.
+Cimon is good source for information about your router's health.
+It also creates files with traffic accounting information (input output bytes)
+if your router is configured to make ip accounting. For more information
+about how to enable ip accounting on cisco routers reffer to the cisco site
+http://www.cisco.com
+II. Packages Needed
+You will need rrdtool http://ee-staff.ethz.ch/~oetiker/
+After installing it type 'make site-perl-install'.
+You'll also need the Net::SNMP and Net::Netmask packages available at CPAN.
+search.cpan.org.
+
+Installation instruction for both rrdtool,Net::SNMP and Net::Netmask
+are included with the packages.
+
+II.Bugs
+I have buggy mind so it's expected to write buggy programs ;).
+Still if you think that something is bug feel free to contact me.

@@ -1,0 +1,34 @@
+--SASACCT FAQ---
+
+Q: What is sasacct??
+A: Sasacct is accounting package that I (sas) use for for monitoring the traffic on my network. I found it usefull so decided to share it with the others. May help someone and somebody can find it very usefull. Because I use both BSD and Linux (may favourites are OpenBSD and Slackware) it was better to make one package for both of them.
+
+Q: I use sasacct for accounting but shows me only the output traffic
+A: You probably have a router and some machines , one of them runs sasacct. You add the default gateway to the others to point to sasacct machine so output goes trough it. It's fine, but when the packet goes back it hits the machine sending the request without passing the accountig rules because your router sees the machine sending it directly. So I personaly preffer to handle this problem by carefull segmentation of my network and routing the accounted segments trough the sasacct machine.If I have two networks I say route network a trough machine b(sasacct) etc.
+
+Q:Can I account a whole network, not just a single host.
+A: Yes you can, just add accounting rules for a network in your packet filter. In sasacct.conf file add only the network addres, without the netmask stuff, e.g if you want to monitor network 192.168.11.0/26 insert rule for monitoring and in sasacct.conf just add 192.168.11.0.
+
+Q: I have FreeBSD, and refering to the FreeBSD handbook the packet filtering is done trough ipfw?
+A: Yes. But it has ipf and ipfstat too. Did you check that ? :)
+
+Q: I'm running sasacct for 3 months and everithing was OK, but one day I reorganized the network so I changed the machine wich is accounting to another one. Can I save the results that I have and continue monitoring?
+A: Yes , you can. First, if you've read the rrdtool manpage you know that rrd can export it's database in xml. Copy the file with traffic data to the another machine in the directory where sasacct resides. Next step run 'rrdtool dump filename.rrd > filename.xml'. After that copy the xml file to the new machine and run 'rrdtool restore filename.xml filename.rrd' and you will continue the monitoring on the new host. I personally have a script wich makes backups of the rrd every night.
+
+Q: It's pain to add the rules then to edit my script wich starts the packet filter so changes are on after restart. Are there any automated tools to do this?
+A: If your are using linux iptables-save iptables-restore and ipchains-save ipchains-restore are your best friends. Go read the manual as soon as possible.
+
+Q: I use sasacct with -r option (loggind to rrd without graphs). And when select from the cgi a period for a month from the last year for example the graphics looks ugly.
+A: Yes it's looking this way because the data in the rrd file is summarized for the period you've selected. But it gives the picture. You know when there was high load and when there wasn't.
+
+Q: Would you recomend as an author some good usage sheme for your package?
+A: Yes. Run 'sasacct -r' every 5 minutes. Run 'sasacct -g' hourly. Run 'sasacct -s' weekly. This will reduce the load on your machine. If you experience problems run sasacct with -d option for debugging.Add to -r example -e option if you have remote running sasacct's.
+
+Q: I have the following problem, i have rrdtool rpminstalled  on my Red Hat box, but sasacct didn't find it.
+A: It looks like the redhat rpm rrdtool package installs RRDs module for perl version 5.003_2 or something like that but the perl distro available is perl 5.6.0 and the @INC directory where perl searches for modules is different. Copy the files there, where you can find by executing - perl -e 'print $_"\n" for @INC'. The other solution wich I recommend is download a fresh copy of rrdtool from www.rrdtool.org and complile. Installation instructions available with it.
+
+Q:I have N machines running sasacct.Can I log to one place not to all N of them.
+A: Yes you can. Run sasacct -i via inetd/xinetd on the machines on wich you dont want to make logfiles and graphics. Fetch the data femotely with sasacct -e from the machine wich you decided to be the monitoring host.
+
+Q:We are a large network and its organized in a way that we have some places where we can do accounting on *NIX machines but there are places where we have cisco or other vendor routers and we want to organize accounting in one location. Can we use sasacct for this.
+A: Yes. Sasacct is separeted in two parts. Sasacct.plx wich gets the data and cgi scripts wich visualise it. You can use cimon => 0.2 (for ip accounting ) on cisco routers or sastragraph => 0.2 (for accounting on interface basis) both available on the same site where you can download sasacct. The ip accounting feature is only available on cisco products so cimon is only for cisco. If somebody knows a vendor that supports something like ip accounting on its products let me know. I'll do my best to add a traffic collector for it. The parts from sasacct wich you can use are the cgi scripts - sastrgraph and cimon are designed to work with them. More information about integrating the 3 packages in one solution you can find in the README's of both cimon and sastragraph.

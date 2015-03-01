@@ -1,0 +1,2 @@
+- reffering to interfaces via name e.g Ethernet0/1 or via it's ip address
+  in the configfile. (medium priority) (done)

@@ -1,0 +1,13 @@
+# edit your /etc/services and add there the following line
+# 'sasacct 1234/tcp'
+# place this file in /etc/xinetd.d 
+# restart xinetd.
+service sasacct
+{
+    disable = no
+    socket_type     = stream
+    wait            = no
+    user            = root
+    server          = /path/to/sasacct/sasacct.plx
+    server_args	= -i
+}

@@ -1,0 +1,22 @@
+#	$OpenBSD: ipf.rules,v 1.6 1997/11/04 08:39:32 deraadt Exp $
+#
+# IP filtering rules.  See the ipf(5) man page for more
+# information on the format of this file, and /usr/share/ipf
+# for example configuration files.
+#
+# Pass all packets by default.
+# edit the ipfilter= line in /etc/rc.conf to enable IP filtering
+#
+pass in from any to any
+pass out from any to any
+# Ip accounting starts here
+count in on ppp0 from any to 195.34.109.227
+count out on ppp0 from 195.34.109.227 to any
+count in on ppp0 from any to 195.34.109.228
+count out on ppp0 from 195.34.109.228 to any
+# END 
+block in log quick on ppp0 from any to any port = 21
+block in log quick on ppp0 from any to any port = 23
+block in log quick on ppp0 from any to any port = 139
+block in log quick on ppp0 from any to any port = 6000
+block in log quick on ppp0 from any to any port = 111

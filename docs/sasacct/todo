@@ -1,0 +1,7 @@
+- more free time for doing this and also for beer ;) (very very high priority)
+- rewrite of the cgi-script for support of aliases for the ip's and a client cgi with 
+  usernname and password (high priority 1.0.2 maybe) - partialy done.
+- fetch functions to return in/out values and ip's and pass them
+  to one function wich will decide what to do (middle priority)
+- database interface (pg) (very low priority) 
+- monitoring/graphing per port, (e.g. 80;22;6667;etc.) (very low priority)

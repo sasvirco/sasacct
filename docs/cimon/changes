@@ -1,0 +1,9 @@
+0.4 - unknown values RRA rounded to zero
+    - language support 
+0.3 - graphs in bits per second
+    - fixed bug with creation of the monthly graphs
+    - rewrite of the graph() function
+0.2 - added ability to do ip accounting on cisco routers via ip accounting feature
+    - logfiles with the accountng data are the same that another accounting package uses (sasacct) available
+      at http://rousse.pm.org/sasacct/. You can use the two packages as one.
+0.1 - first release

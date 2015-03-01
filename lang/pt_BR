@@ -1,0 +1,17 @@
+# Author: Diogo Avelino
+# 
+
+day=Diário
+week=Semanal
+month=Mensal
+year=Anual
+vertical-label-bits=Bits por segundo
+vertical-label-bytes=Bytes por segundo
+in=Entrada
+average=Média
+min=Mínimo
+max=Máximo
+out=Saída
+current=Atual
+comment=Gerado pelo sasacct http\://rousse.pm.org/sasacct
+title=Estatística de Tráfego

@@ -1,0 +1,17 @@
+# Author: Eduardo Bejar
+#
+
+day=Diario
+week=Semanal
+month=Mensual
+year=Anual
+vertical-label-bits=Bits por segundo
+vertical-label-bytes=Bytes por segundo
+in=Entrada
+average=Promedio
+min=Mín
+max=Máx
+out= Salida
+current=Actual
+comment=Generado por sasacct http\://rousse.pm.org/sasacct
+title=Estadística de Tráfico

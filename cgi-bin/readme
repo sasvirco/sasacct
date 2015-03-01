@@ -1,0 +1,27 @@
+If you want to use the new web interface with
+username/password authentication you will have 
+to install CGI::Session module from CPAN.
+The easiest way to do this is by using
+the CPAN.pm modules provided with your perl
+distribution. 
+
+bash# perl -MCPAN -e shell 
+cpan> install CGI::Session
+
+After installing the module you have to copy
+the sasacct.users file from ../etc/ to /etc/
+and edit it to fit your needs. The format is 
+username:password:ip,ip,ip
+where ip is valid sasacct logfile wich can be
+found in /var/sasacct/.
+You can add special user admin wich will
+have the ability to see the traffic for
+all accounted hosts.
+admin:adminpass:All
+By default this user isn't there.
+
+Copy sasacct.cgi to the cgi-bin directory 
+of your web server. Copy .gif files in the 
+directory where sasacct graphics will be made 
+and edit sasacct.cgi ($logopath)
+to point to the location.

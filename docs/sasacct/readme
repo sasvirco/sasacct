@@ -1,0 +1,115 @@
+SASacct stands for SAS's accounting package
+
+1. Introduction 
+First, excuse my bad english.
+Sasacct is accounting package, which idea is to count 
+internal kernel counters and to produce log files with 
+identical format working transparently for your operating 
+system, wich means that you can count linux 2.2.x/2.4.x kernels 
+and BSD systems (tested on OpenBSD 2.8/2.9 and FreeBSD 4.4) wich 
+are Daren Reed's ipf compatible. Also works with pf on OpenBSD 3.0.
+This package has also the possibility to get  the files from remote 
+machne via ftp wich makes possible the following situation. One server, 
+where the clients will check how much traffic they have, and multiple 
+machines counting with sasacct and producing output files.There is a 
+script provided with the package called ftpget.plx, wich scans your 
+sasacct.conf for 'R' entry's and then gets the files. This requires 
+the system to have Net::Ftp module, available from CPAN as a part of 
+libnet distribution.SASacct can also run via inetd or some other super-server. 
+Check out the INSTALL file.
+For sasacct to work you'll have to input some rules in your filter 
+policies, usually done  with ipchains for 2.2.x linux kernels, iptables 
+for 2.4.x, ipf for BSD systems and pfctl for OpenBSD since version 3.0.
+This you'll have to make yourself, but you have to know that sasacct 
+expects to count input and output traffic, and just runs the program with some options,
+scans the output and generates input and output values. See the examples 
+directory for some examples for accounting policies.
+For the development of the first sasacct was used OpenBSD 2.8 with perl 5.6.0.
+Tested on Slackware 7.0/7.1/8.0, Red Hat 6.2/7.0/7.1, 
+OpenBSD 2.8/2.9/3.0, FreeBSD 4.4.
+Sasacct also supports collecting data via SNMP (per interfaces basis or 
+via cisco ip accounting feature). 
+For ip accounting on cisco you have to use cimon ver >= 0.2 for collecting the data. 
+On a per interfaces basis you have to use sastragraph ver >= 0.2. 
+Both packages produce the same rrd and logfiles as sasacct 
+does so you have complete accounting solution (maybe :)).
+Installation and integration instructions available with the packages.
+
+2. Configuration file
+
+The configuration file design is simple, the idea behind is borrowed from ircd.
+
+F - *required* full path to the program which you use for generating
+    traffic usage output.Currently supported are -ipfstat for
+    *BSD systems, iptables for Linux 2.4.x, ipchains for Linux 2.2.x and pfctl for OpenBSD 3.0
+E.g. : F:/sbin/ipchains
+
+G - Sasacct version > 0.2 makes mrtg like graphics using Tobias Oetiker's rrdtool. 
+G key must point to a valid directory in your httpd root tree where graphic files will be located.
+*NOTE* You must have rrdtool installed, also when
+installing type 'make site-perl-install' to install the perl modules.
+RRDtool is available here:
+	http://ee-staff.ethz.ch/~oetiker/
+
+E.g. :  G:/var/www/htdocs/sasacct
+
+
+D - *required* directory where all sasacct files with traffic stats will be stored.
+     Defaults to /var/sasacct.
+E.g. : D: /root/sasacctlog
+
+L - local entry - If you are using kernel accounting (Not getting the files via FTP or inetd)
+L:ipaddress:description
+E.g. :L:195.34.109.2:SERVER0
+
+R - remote entry - If you are doing ftp accounting.
+*NOTE* SASacct should be running on the remote machine and the directory where log files are kept should be accessible via ftp.
+    The syntax is F:ip-being-accounted:ip-or-fqdn-of-ftp-server:username:password:log-files-directory
+E.g. : R:195.34.109.2:ftp.domain.com:sasacct:sasacctpass:/sasacctdir
+
+I - this entry is for host running sasacct via inetd or some other super-server. The host after the I options must run sasacct via super-server(inetd,xinetd,tcpserver).Must be ip address.
+E.g : I:195.34.109.226
+
+If you want the graphics in Bits per Second (default:Bytes Per Second) edit sasacct.plx and set $bits to 1
+E.g: my $bits = 0; 
+	will be
+     my $bits = 1;
+
+3. Installation
+The installation is simple. After reading this README and the INSTALL 
+file modify sasacct.conf to fit your needs and copy it to /etc/(default) 
+or use -c commandline option to specify location for it.
+Next you have to insert your accounting rules to your firewall, 
+some examples included in the examples directory and the INSTALL file.
+Run sasacct from crontab every 5 minutes to fetch the info and to zero 
+the counters.Place showtraf.cgi and showgraph.cgi files in the httpd's 
+cgi-bin directory.Edit it if your sasacct.conf is not in etc.
+
+4. Inetd installation
+You can run sasacct on multiple machines and you can use only one of them to collect
+the values for the traffic. The idea behind is simple but practical (i think).
+Instead of writing complicated network code for daemon we use inetd,xinetd or any other super server
+daemon to do the job instead. When running in inetd mode sasacct will print the data on STDOUT
+instead of logging it to a file. When remote sasacct connects it gets the data for all the ip's
+monitored in format same as the form  used in the logfile, then looks for ip input output pairs,
+splits them and updates logfiles/rrd databases.The port for sasacct is 1234/tcp. 
+See INSTALL file for details on how to configure sasacct for use with inetd super-server.
+
+5. Language Support
+If you want to see graphics in your native language, you can
+see in the language directory the translations and add a file for your language. 
+Currently language translation is supported only for the graphics. 
+If you want to submit a language please send it to me. 
+I'll inlcude it in the next distribution.
+In order the language support to work, you have to export 
+the lang shell environment before running sasacct.
+Note that this is *experimental* at the time of writing this.(2002-12-14)
+
+6. BUGS
+It's buggy, I know. The world is not perfect.
+Feel free to report bugs on my email. Prefferd format to do this 
+is the output from sasacct+your packet filtering rules. 
+
+P.S Sometimes I cannot sleep thinking that there is better way to do
+the job, so free my sleep , feel free to send sms (359888575795@sms.mtel.net)
+with this simple words (Hello World). It will make me vary happy. 

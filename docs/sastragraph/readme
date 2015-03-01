@@ -1,0 +1,55 @@
+I. Introduction 
+
+Sastragraph stands for SAS's traffic grapher.
+It also produces text files with traffic statistics.
+I have other accounting package called sasacct. The idea for creating 
+sastragraph was to account also  the clients on my cisco router and to 
+have information about the traffic that goes in and out per interface.
+Just make your logdir and graphdir to point to the directory where
+sasacct stores it's files (usualy /var/sasacct) and you can use the 
+same cgi interface to see the traffic and to produce the graphics.
+
+II. Installation.
+You need Net::SNMP module available at CPAN.
+http://search.span.org
+
+Use tool like snmpwalk to see the numbers of the interfaces that you have.
+
+bash#snmpwalk 195.34.109.1 public interfaces.ifTable.IfEntry.IfDescr  
+
+The output shows you Description of the interfaces (Ethernet, ISDN etc.) 
+and the corresponding number(the last digit of every line of output). 
+You'll need this number to tell sastragraph which interface you want to monitor.
+If you specify interfacetype to be descriptions you will enter the descriptions
+instead of interface numbers. 
+Edit your sastragraph.conf and add your info there.(examples provided).
+Place sastragraph.conf in /etc/ , or edit sastragraph and change the
+path  to your config to some other place.
+You must  enable snmp agent on the remote router in order to use this 
+program,and you also must know the community name. Ask your network administrator
+for this information if you don't have it, or you are not the person with permissions
+to access those routers/switches that you want to monitor.
+Start it every 5 minutes from crontab.
+
+III. Some important notes about traffic logging.
+Logging is done through the following decision making
+scheme.
+When you run sastragraph for the first time
+it will query your configured routers and 
+will produce the 'last' file, which contains the data
+about last known traffic (via SNMP) for the interface.
+On the second run sastragraph will get the new values which I will name CURRENT and compare
+them  to the last known. The data that comes from the last 
+file will be called LAST, the data which goes to the logfile with the traffic will be
+referred to as NEW. So finally CURRENT goes to last,  NEW goes for 
+updating the rrd files and the logfile.
+1. If CURRENT > LAST then NEW = CURRENT - LAST
+2. If CURRENT < LAST then NEW = CURRENT (you loose some traffic, this happens
+   in case of counter overflow or restart,usually max for 4.59 min)
+3. If not reachable it will return -1. In that case it will log zeros to rrd file  and nothing to logfile and lastfile. 
+4. If the creation time of the last file is 900 seconds before now consider that we query the host for the first time.
+   You can loose some traffic. Usualy the time that your accounting machine was down (due to a power failure, network was down   broken hardware or whatever) + 4.59 min. Note this when you set up your computer clock. Maybe you'll have to change the modification time of your last file 
+
+IV. Bugs
+Report them or any
+suggestion via email  sasvirco@homemail.com

@@ -1,0 +1,15 @@
+0.4
+- added interfacetype option. If interfacetype is descriptions
+  you can collect counters based on interface description.
+  The default is numbers.
+0.3
+- added language support (from sasacct)
+- better algoritm for querying the router for snmp counters
+- unknown values in RRA rounded to zero
+0.2
+- DS in rrd files changed from COUNTER to ABSOLUTE
+- generates files with traffic statistics
+- syslog logging
+- cgi interface for checking date to date traffic statistics (from sasacct)
+- added compatibiliti with sasacct (http://rousse.pm.org/sasacct/) package
+  in order to produce full accounting system
