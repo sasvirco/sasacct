@@ -28,5 +28,4 @@ please read cgi-bin/README.
                                                                              
 Enjoy!!!
 
-P.S Sometimes I cannot sleep thinkingt hat there is better way to do
-the job, so free my sleep , feel free to send sms 359888575795@sms.mtel.net)with this simple words (Hello World). It will make me vary happy. And please do not use MS Outlook for this.
+
