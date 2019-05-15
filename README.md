@@ -1,4 +1,4 @@
-# sasacct
+# sasacct - This code is not maintained. It's old and here for historical purposes.
 SASacct is accounting package, used for collecting traffic statistics using internal OS specific kernel counters or using SNMP. 
 
 This is 1.0.3 release of SAS's accounting statistics. It contains 3 programs for collecting statistics for used traffic and create graphics with bandwith tilization:
